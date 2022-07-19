@@ -11,12 +11,7 @@ class UserKit {
         const { hash, salt } = this._setPassword(password)
 
         const newUser = await this._prisma.user.create({
-            data: {
-                name,
-                email,
-                hash,
-                salt
-            }
+            data: { name, email, hash, salt }
         })
 
         return newUser
@@ -29,8 +24,17 @@ class UserKit {
 
     private _setPassword(pass: string) {
         const salt = crypto.randomBytes(16).toString("hex")
-        const hash = crypto.pbkdf2Sync(pass, salt, 1000, 64, `sha512`).toString()
+        const hash = crypto.pbkdf2Sync(pass, salt, 1000, 64, `sha512`).toString("hex")
         return { hash, salt }
+    }
+
+    matchPasswords(receivedPassword: string, databaseHash: string, salt: string): boolean {
+        const receivedPasswordHash = this._hashStringWithSalt(receivedPassword, salt)
+        return receivedPasswordHash === databaseHash
+    }
+
+    private _hashStringWithSalt(str: string, salt: string): string {
+        return crypto.pbkdf2Sync(str, salt, 1000, 64, "sha512").toString("hex")
     }
 
 }
