@@ -11,8 +11,14 @@ export default async function createUserApi(req: ExtendedNextApiRequest, res: Ne
     const { name, email, password } = req.body
     const candidate = await UserKit.findUserByEmail(email)
 
+    console.log('Trying create new user with data...', req.body)
+    console.log('candidate', candidate)
+
     if (candidate !== null) { res.send('Failed create new user, email already using') } else {
         const createdUser = await UserKit.createUser({ name, email, password })
+
+        console.log("success create new user")
+
         res.status(200)
         res.json({
             email: createdUser?.email || "unknown",

@@ -18,7 +18,7 @@ class UserKit {
     }
 
     async findUserByEmail(email: string): Promise<User | null> {
-        const candidate = await this._prisma.user.findFirst({ where: { email } })
+        const candidate = await this._prisma.user.findUnique({ where: { email } })
         return candidate
     }
 

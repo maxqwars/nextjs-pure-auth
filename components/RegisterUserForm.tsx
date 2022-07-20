@@ -10,7 +10,22 @@ const RegisterUserForm = (props: Props) => {
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data: any) => console.log(data);
+
+  const onSubmit = (data: any) => {
+    const apiUrl = `${location.protocol}//${location.host}/api/user/create`;
+    console.log("create user handler url", apiUrl);
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((user) => console.log(user))
+      .catch((error) => console.error(error));
+  };
 
   return (
     <form className="box" onSubmit={handleSubmit(onSubmit)}>
