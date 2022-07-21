@@ -17,7 +17,8 @@ export default async function whoamiApi(
   }
 
   res.json({
-    data: null,
+    name: null,
+    email: null,
   });
 
   return;
