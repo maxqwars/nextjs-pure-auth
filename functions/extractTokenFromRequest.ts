@@ -1,10 +1,10 @@
 import { NextApiRequest } from "next";
 
-export default function extractTokenFromCookies(
+export default function extractTokenFromRequest(
   req: NextApiRequest
 ): string | null {
-  const rawCookies: string = req.headers.cookie || "";
-  const cookiesArray: string[] = rawCookies.split(";");
+  const rawCookiesString: string = req.headers.cookie || "";
+  const cookiesArray: string[] = rawCookiesString.split(";");
 
   return (
     cookiesArray

@@ -1,7 +1,7 @@
 import { UserDto } from "../typings/UserDto";
 import { LoginUserDto } from "../typings/LoginUserDto";
 import UserKit from "./UserKit";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Session } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 class AuthKit {
@@ -15,7 +15,7 @@ class AuthKit {
     if (candidate === null) return null;
 
     if (candidate !== null) {
-      const passwordsMatched = UserKit.matchPasswords(
+      const passwordsMatched = UserKit.comparePasswordAndHash(
         password,
         candidate.hash,
         candidate.salt
@@ -47,6 +47,22 @@ class AuthKit {
     }
 
     return null;
+  }
+
+  async getAllSessions(email: string): Promise<Session[] | null> {
+    const user = await UserKit.findUserByEmail(email);
+
+    if (user === null) {
+      return null;
+    } else {
+      const sessions = await this._prisma.session.findMany({
+        where: { userId: user.id },
+      });
+
+      console.log(`List of ${user.email} sessions:`, sessions);
+
+      return sessions;
+    }
   }
 
   decodeToken(token: string): UserDto | null {

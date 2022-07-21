@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { extractTokenFromCookies } from "../../../functions";
+import { extractTokenFromRequest } from "../../../functions";
 import AuthKit from "../../../utils/AuthKit";
 
 export default async function whoamiApi(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const jwtToken = extractTokenFromCookies(req);
+  const jwtToken = extractTokenFromRequest(req);
 
   console.log(jwtToken);
 
