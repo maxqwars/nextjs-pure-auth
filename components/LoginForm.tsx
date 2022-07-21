@@ -1,16 +1,41 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from 'next/router'
 
 type Props = {};
 
+function setCookie(name: string, value: string, days: number) {
+  var expires = "";
+  if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
 const LoginForm = (props: Props) => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: any) => {
+    const apiUrl = `${location.protocol}//${location.host}/api/auth/login`;
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).then(res => res.text()).then(token => {
+      console.log("Received session token", token)
+      setCookie("jwt_token", token, 1)
+      router.push(`${location.protocol}//${location.host}/`)
+    })
+  
+  };
 
   return (
     <form className="box" onSubmit={handleSubmit(onSubmit)}>
